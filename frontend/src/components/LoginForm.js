@@ -1,15 +1,19 @@
-
 import React, { useState } from 'react';
 
 const LoginForm = ({ onLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    onLogin(username, password);
+    const user = await onLogin(username, password);
+    if (user) {
+      console.log('Logged in as:', user.username);
+    } else {
+      console.log('Login failed');
+    }
   };
-  
+
   return (
     <form onSubmit={handleSubmit}>
       <div>
@@ -34,4 +38,3 @@ const LoginForm = ({ onLogin }) => {
 };
 
 export default LoginForm;
-

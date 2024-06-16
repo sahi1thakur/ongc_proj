@@ -1,15 +1,13 @@
-import React from 'react';
-import { useNavigate, Routes, Route } from 'react-router-dom'; // Import useNavigate
-import LoginForm from './components/LoginForm'; 
+
+import React, { useState } from 'react';
+import LoginForm from './components/LoginForm';
 import Quiz from './components/Quiz';
 
-
-const App = () => {
-  const navigate = useNavigate(); // Call useNavigate to get the navigate function
+function App() {
+  const [user, setUser] = useState(null);
 
   const handleLogin = async (username, password) => {
     try {
-      // Make sure to include the full URL with the correct port number
       const response = await fetch('http://localhost:3000/login', {
         method: 'POST',
         headers: {
@@ -18,32 +16,30 @@ const App = () => {
         body: JSON.stringify({ username, password }),
       });
 
-      const data = await response.json();
-
       if (response.ok) {
-        // Login successful
-        console.log('Login successful:', data);
-        navigate('/Quiz'); // Use navigate to redirect
-        // Handle redirection or state updates as needed
-        // For example, you might want to set the user state here
+        const data = await response.json();
+        setUser(data.user);
+        return data.user;
       } else {
-        // Login failed
-        console.error('Login failed:', data.message);
-        // Handle error messages or state updates as needed
+        const error = await response.text();
+        console.error('Login error:', error);
+        return null;
       }
     } catch (error) {
-      // Network or other error
-      console.error('Error:', error);
-      // Handle error messages or state updates as needed
+      console.error('Network error:', error);
+      return null;
     }
   };
 
   return (
-    <Routes> {/* Define your routes here */}
-      <Route path="/" element={<LoginForm onLogin={handleLogin} />} />
-      <Route path="/quiz" element={<Quiz />} />
-    </Routes>
+    <div>
+      {user ? (
+        <Quiz username={user.username} />
+      ) : (
+        <LoginForm onLogin={handleLogin} />
+      )}
+    </div>
   );
-};
+}
 
 export default App;

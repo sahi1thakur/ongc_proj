@@ -1,6 +1,7 @@
 const express = require('express');
-const cors = require('cors'); // Make sure to install the cors package
+const cors = require('cors');
 const mysql = require('mysql2');
+
 const app = express();
 const port = 3000;
 
@@ -11,9 +12,10 @@ const connection = mysql.createConnection({
   password: 'sahil',
   database: 'quiz'
 });
+
 app.use(cors({
-    origin: 'http://localhost:3001' // frontend's URL
-  }));
+  origin: 'http://localhost:3001' // frontend's URL
+}));
 
 // Connect to the database
 connection.connect(err => {
@@ -50,12 +52,10 @@ app.post('/login', (req, res) => {
   });
 });
 
-
-
 app.post('/submit', (req, res) => {
-  const { question, selectedOption } = req.body;
-  const query = 'INSERT INTO responses (question, selectedOption) VALUES (?, ?)';
-  connection.query(query, [question, selectedOption], (err, result) => {
+  const { question, selectedOption, username } = req.body;
+  const query = 'INSERT INTO responses (question, selectedOption, username) VALUES (?, ?, ?)';
+  connection.query(query, [question, selectedOption, username], (err, result) => {
     if (err) {
       console.error('Error inserting into the database:', err);
       return res.status(500).send('Error inserting into the database');
@@ -64,9 +64,6 @@ app.post('/submit', (req, res) => {
   });
 });
 
-
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
-
-
