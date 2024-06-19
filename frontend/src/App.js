@@ -1,6 +1,7 @@
-
 import React, { useState } from 'react';
+import { Route, Routes } from 'react-router-dom';
 import LoginForm from './components/LoginForm';
+import Home from './components/Home';
 import Quiz from './components/Quiz';
 
 function App() {
@@ -21,8 +22,8 @@ function App() {
         setUser(data.user);
         return data.user;
       } else {
-        const error = await response.text();
-        console.error('Login error:', error);
+        const error = await response.json();
+        console.error('Login error:', error.message);
         return null;
       }
     } catch (error) {
@@ -34,7 +35,10 @@ function App() {
   return (
     <div>
       {user ? (
-        <Quiz username={user.username} />
+        <Routes>
+          <Route path="/quiz" element={<Quiz username={user.username} />} />
+          <Route path="/" element={<Home user={user} />} />
+        </Routes>
       ) : (
         <LoginForm onLogin={handleLogin} />
       )}

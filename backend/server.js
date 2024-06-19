@@ -17,7 +17,7 @@ app.use(cors({
   origin: 'http://localhost:3001' // frontend's URL
 }));
 
-// Connect to the database
+// database connection 
 connection.connect(err => {
   if (err) {
     console.error('Error connecting to the database:', err);
@@ -26,7 +26,7 @@ connection.connect(err => {
   console.log('Connected to the database.');
 });
 
-// Enable CORS for all routes and origins
+
 app.use(cors());
 
 // Middleware to parse JSON bodies
@@ -43,15 +43,15 @@ app.post('/login', (req, res) => {
       return;
     }
     if (results.length > 0) {
-      // User found
-      res.json({ message: 'Login successful', user: results[0] });
+      const user = results[0];
+      res.json({ message: 'Login successful', user });
     } else {
-      // User not found
       res.status(401).json({ message: 'Invalid credentials' });
     }
   });
 });
 
+// Submit Api Endpoint
 app.post('/submit', (req, res) => {
   const { question, selectedOption, username } = req.body;
   const query = 'INSERT INTO responses (question, selectedOption, username) VALUES (?, ?, ?)';
